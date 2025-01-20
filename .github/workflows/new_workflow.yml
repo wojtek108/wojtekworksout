@@ -43,12 +43,4 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-<<<<<<< HEAD
-          git add .
-          git commit -m "Add generated JSON file" || echo "No changes to commit"
-          git push
-=======
-          git add .  
-          git commit -m "Add generated HTML file"
-          git push origin HEAD
->>>>>>> 44e1d5bc5b1cb80bdcea87d3601a07a9f1bf3a41
+
