@@ -2,12 +2,8 @@ name: Run Python Script
 
 on:
   schedule:
-<<<<<<< HEAD
     - cron: "0 5 * * *"
   workflow_dispatch:
-=======
-    - cron: "0 0 * * 0"
->>>>>>> 44e1d5bc5b1cb80bdcea87d3601a07a9f1bf3a41
 
 jobs:
   run-script:
