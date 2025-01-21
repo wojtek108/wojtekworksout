@@ -1,0 +1,17 @@
+[build]
+  publish = "."
+  command = ""
+
+[build.processing]
+  skip_processing = false
+
+[build.processing.html]
+  pretty_urls = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.processing.ignore]
+  files = ["!*.html"]
