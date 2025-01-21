@@ -15,3 +15,7 @@
 
 [build.processing.ignore]
   files = ["!*.html"]
+
+[build]
+  command = "apt-get update && apt-get install -y python3-dev build-essential && pip install -r requirements.txt"
+
