@@ -1,3 +1,5 @@
 /pandas_to_html_misc_files
 .gitignore
 secrets.json
+/venv
+testing_conn.py
