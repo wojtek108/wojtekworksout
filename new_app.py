@@ -3,11 +3,14 @@ import pandas as pd
 import json
 import os
 
+
 # Load the credentials JSON from the environment variable
 credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-
+if not credentials_json:
+    raise ValueError("GOOGLE_APPLICATION_CREDENTIALS environment variable is not set")
 # Parse the JSON string to a dictionary
 credentials_dict = json.loads(credentials_json)
+
 
 # Initialize the client using the provided service account credentials
 gc = gspread.service_account_from_dict(credentials_dict)
