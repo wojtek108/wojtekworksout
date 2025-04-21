@@ -1,0 +1,78 @@
+name: Update Index HTML
+
+on:
+  schedule:
+    - cron: "0 5 * * MON"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install pipenv (stable)
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv==2022.10.12
+
+      # Caching Pipenv virtualenvs can cause issues if Python version or environment changes.
+      # Instead, cache only Pipenv's package downloads for speed, not the virtualenv itself.
+      - name: Cache pipenv downloads
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/Pipfile.lock') }}-py${{ steps.setup-python.outputs.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Remove any existing Pipenv virtualenv
+        run: pipenv --rm || true
+
+      - name: Install dependencies with Pipenv
+        run: pipenv install --python 3.11
+
+      - name: Run Python script
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+        run: |
+          pipenv run python new_app.py
+          echo "Python script execution completed"
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          if git diff --quiet; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add index.html
+          git commit -m "Update index.html [skip ci]"
+
+      - name: Push changes
+        if: steps.git-check.outputs.changes == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      - name: Output status
+        if: steps.git-check.outputs.changes != 'true'
+        run: echo "No changes to commit"
