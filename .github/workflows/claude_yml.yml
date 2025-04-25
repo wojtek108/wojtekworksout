@@ -1,4 +1,4 @@
-name: Run Python Script -- claude 2
+name: Run Python Script --cl3
 
 on:
   workflow_dispatch:
@@ -22,13 +22,20 @@ jobs:
 
       - name: Setup Google Credentials
         run: |
+          if [ -z "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" ]; then
+            echo "Error: GOOGLE_APPLICATION_CREDENTIALS secret is empty"
+            exit 1
+          fi
           echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > google-credentials.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=google-credentials.json" >> $GITHUB_ENV
+          # Check if the file contains valid JSON
+          python -c "import json; json.load(open('google-credentials.json'))" || { echo "Invalid JSON in credentials file"; exit 1; }
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/google-credentials.json" >> $GITHUB_ENV
 
       - name: Run Python script
         run: python new_app.py
 
       - name: Commit changes
+        if: success()
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
