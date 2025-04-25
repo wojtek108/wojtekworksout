@@ -1,4 +1,4 @@
-name: Run Python Script -- claude
+name: Run Python Script -- claude 2
 
 on:
   workflow_dispatch:
@@ -20,12 +20,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Setup Google Credentials
+        run: |
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > google-credentials.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=google-credentials.json" >> $GITHUB_ENV
+
       - name: Run Python script
         run: python new_app.py
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
       - name: Commit changes
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
+          git add .
+          git commit -m "Update data via GitHub Action" || echo "No changes to commit"
+          git push origin main
