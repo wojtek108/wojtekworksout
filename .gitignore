@@ -3,4 +3,4 @@
 secrets.json
 /venv
 testing_conn.py
-.env
+.envcredentials-base64.txt
