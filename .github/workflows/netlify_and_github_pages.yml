@@ -1,0 +1,87 @@
+name: Update Index HTML
+
+on:
+  schedule:
+    - cron: "0 5 * * MON"
+  workflow_dispatch:
+
+# 1. Added permissions for GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv
+
+      - name: Cache pipenv virtualenv
+        uses: actions/cache@v3
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
+
+      - name: Install dependencies
+        run: pipenv install
+
+      - name: Run Python script
+        run: |
+          pipenv run python new_app.py
+          echo "Python script execution completed"
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add index.html
+          git commit -m "Update index.html [skip ci]"
+
+      - name: Push changes
+        if: steps.git-check.outputs.changes == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      # --- NEW STEPS START HERE ---
+
+      # 2. This prepares the index.html file to be hosted
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # This uploads the root folder where your index.html is
+
+      # 3. This actually pushes the file to the live GitHub Pages site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        
+      # --- NEW STEPS END HERE ---
+
+      - name: Output status
+        if: steps.git-check.outputs.changes != 'true'
+        run: echo "No changes to commit"
