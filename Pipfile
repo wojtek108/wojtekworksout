@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+# Primary Libraries
+pandas = "*"
+numpy = "*"
+gspread = "*"
+requests = "*"
+jinja2 = "*"
+
+# Google Auth Stack
+google-auth = "*"
+google-auth-httplib2 = "*"
+google-auth-oauthlib = "*"
+requests-oauthlib = "*"
+
+# Utilities
+python-dateutil = "*"
+cachetools = "*"
+pytz = "*"
+tzdata = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"

@@ -1,0 +1,9 @@
+{"level":"info","message":"MCP Shell Server started","timestamp":"2026-02-09T17:46:09.112Z"}
+{"level":"info","message":"Shell: /bin/bash","timestamp":"2026-02-09T17:46:09.113Z"}
+{"level":"info","message":"Working Directory: /home/wga","timestamp":"2026-02-09T17:46:09.114Z"}
+{"level":"info","message":"Platform: linux","timestamp":"2026-02-09T17:46:09.114Z"}
+{"level":"info","message":"Hostname: wga-OptiPlex-790","timestamp":"2026-02-09T17:46:09.114Z"}
+{"level":"info","message":"Username: wga","timestamp":"2026-02-09T17:46:09.114Z"}
+{"level":"info","message":"MCP Shell Server ready","timestamp":"2026-02-09T17:46:09.124Z"}
+{"level":"info","message":"Executing command: sudo apt update && sudo apt install -y python3-dev build-essential","timestamp":"2026-02-09T17:46:40.699Z"}
+{"level":"error","message":"Command execution error: sudo: unable to restore terminal settings: Illegal seek\nsudo: a password is required\n","timestamp":"2026-02-09T17:51:01.246Z"}
